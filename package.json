@@ -1,5 +1,5 @@
 {
-  "name": "axios-cache-plugin",
+  "name": "axios-store-plugin",
   "version": "0.1.0",
   "description": "Axios plugin that uses store.js to cache GET requests.",
   "main": "index.js",
