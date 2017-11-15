@@ -1,11 +1,16 @@
 import store from "store";
+import expirePlugin from "store/plugins/expire";
+
+store.addPlugin(expirePlugin);
 
 const axiosStore = axiosInstance => {
   const reqOrCache = (options = {}, ...arg) => {
     const cacheKey = JSON.stringify(options);
     const cachedData = store.get(cacheKey);
     return cachedData
-      ? Promise.resolve(Object.assign(cachedData, { cacheKey }))
+      ? Promise.resolve(
+          Object.assign(cachedData, { cacheKey, fromCache: true })
+        )
       : axiosInstance
           .get(...arg)
           .then(({ data }) => Object.assign(data, { cacheKey }));
