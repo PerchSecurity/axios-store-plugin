@@ -5,15 +5,17 @@ store.addPlugin(expirePlugin);
 
 const axiosStore = axiosInstance => {
   const reqOrCache = (options = {}, ...arg) => {
-    const cacheKey = JSON.stringify(options);
+    const cacheKey = `axios__${JSON.stringify(options)}`;
     const cachedData = store.get(cacheKey);
     return cachedData
-      ? Promise.resolve(
-          Object.assign(cachedData, { cacheKey, fromCache: true })
-        )
-      : axiosInstance
-          .get(...arg)
-          .then(({ data }) => Object.assign(data, { cacheKey }));
+      ? Promise.resolve({
+          ...cachedData,
+          __cacheKey: cacheKey,
+          __fromCache: true
+        })
+      : Promise.resolve(store.set(cacheKey, { loading: true }))
+          .then(() => axiosInstance.get(...arg))
+          .then(({ data }) => ({ ...data, __cacheKey: cacheKey }));
   };
 
   // Check that the
