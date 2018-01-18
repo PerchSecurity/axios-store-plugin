@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.1
+
+- Add automatic expiry for placeholder after 10 seconds #1
+- Remove placeholder from cache in `catch()`
+
 ## 0.2.0
 
 - Prefix cache entries with `axios__`

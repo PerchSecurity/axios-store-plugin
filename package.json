@@ -1,6 +1,6 @@
 {
   "name": "axios-store-plugin",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Axios plugin that uses store.js to cache GET requests.",
   "main": "index.js",
   "scripts": {
@@ -42,6 +42,7 @@
     "prettier": "^1.7.4"
   },
   "dependencies": {
+    "shallowequal": "^1.0.2",
     "store": "^2.0.3"
   }
 }
