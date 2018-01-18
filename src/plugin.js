@@ -1,7 +1,15 @@
 import store from "store";
 import expirePlugin from "store/plugins/expire";
+import shallowEqual from "shallowequal";
+
+const SECOND = 1000;
+const TEN_SECONDS_FROM_NOW = () => new Date().getTime() + 10 * SECOND;
+const PLACEHOLDER = { loading: true };
 
 store.addPlugin(expirePlugin);
+
+const createPlaceholder = cacheKey =>
+  Promise.resolve(store.set(cacheKey, PLACEHOLDER, TEN_SECONDS_FROM_NOW()));
 
 const axiosStore = axiosInstance => {
   const reqOrCache = (options = {}, ...arg) => {
@@ -13,9 +21,14 @@ const axiosStore = axiosInstance => {
           __cacheKey: cacheKey,
           __fromCache: true
         })
-      : Promise.resolve(store.set(cacheKey, { loading: true }))
+      : createPlaceholder(cacheKey)
           .then(() => axiosInstance.get(...arg))
-          .then(({ data }) => ({ ...data, __cacheKey: cacheKey }));
+          .then(({ data }) => ({ ...data, __cacheKey: cacheKey }))
+          .catch(error => {
+            if (shallowEqual(store.get(cacheKey), PLACEHOLDER))
+              store.remove(cacheKey);
+            throw error;
+          });
   };
 
   // Check that the
